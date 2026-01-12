@@ -1,60 +1,47 @@
 # ASCII Rotating Pyramid Renderer (C++)
 
-A terminal-based **software renderer** written in modern **C++** that displays a rotating 3D pyramid using only ASCII characters. This project was refactored to better reflect **real-world C++ practices**, with clearer structure, safer math, and cleaner state handling.
+This is a small C++ project that draws a rotating 3D pyramid in the terminal using ASCII characters. I wrote it mostly as an experiment to understand 3D rotations, perspective projection, and how to do a simple Z-buffer without any graphics library.
 
 ---
 
-## ✨ What This Project Demonstrates
+## What it does
 
-* Manual **3D rotation** using Euler angles
-* **Perspective projection** (3D → 2D)
-* **Z-buffer depth testing** for correct visibility
-* Real-time animation loop in the terminal
-* Clean separation of global configuration vs logic
-* No graphics libraries — pure math + C++
-
----
-
-## 🧠 Key Improvements (Refactor Highlights)
-
-* Added **clear comments** explaining every rendering step
-* Reduced unnecessary global state usage
-* Fixed array vs pointer linkage issues using correct `extern` declarations
-* Made math temporaries local to avoid shared mutable state
-* Improved readability and maintainability
-
-These changes make the code closer to what you would expect in a **junior systems / graphics-oriented C++ role**.
+* Rotates a 3D pyramid in real-time
+* Projects 3D points onto a 2D terminal screen
+* Handles depth using a simple Z-buffer
+* Uses ASCII characters to show different faces of the pyramid
+* Runs entirely in the terminal with no external graphics libraries
 
 ---
 
-## 🖥️ How It Works (High Level)
+## How it works
 
-1. A pyramid is described mathematically using height and base width
-2. For every animation frame:
+Basically, each frame I:
 
-   * Screen buffer and Z-buffer are cleared
-   * Pyramid surface points are generated
-   * Each point is rotated in 3D space
-   * Points are projected onto a 2D terminal grid
-   * The Z-buffer ensures correct depth ordering
-3. ANSI escape codes clear and redraw the terminal
-4. Rotation angles are updated continuously
+1. Clear the screen and Z-buffer
+2. Loop through the points on the pyramid's faces
+3. Rotate each point in 3D using Euler angles (A, B, C)
+4. Project the point to 2D coordinates on the terminal
+5. Use a Z-buffer to make sure closer points overwrite farther points
+6. Draw the result in the terminal
+7. Increment the rotation angles for the next frame
+
+It repeats this forever to make it look like the pyramid is spinning.
 
 ---
 
-## 📂 Project Structure
+## Project files
 
 ```
-.
-├── main.cpp        # Rendering loop and math logic
-├── Globals.h       # Shared configuration & state declarations
-├── Globals.cpp     # Global definitions (single translation unit)
-└── README.md
+main.cpp        # The rendering loop and math logic
+Globals.h       # Shared constants and buffers
+Globals.cpp     # Global definitions
+README.md       # This file
 ```
 
 ---
 
-## 🚀 Build & Run
+## How to run
 
 ### Compile
 
@@ -68,38 +55,26 @@ g++ -std=c++11 -O2 main.cpp Globals.cpp -o pyramid
 ./pyramid
 ```
 
-Press **Ctrl + C** to exit.
+Press Ctrl+C to stop it.
 
 ---
 
-## 📐 Concepts You Can Talk About in Interviews
+## Notes
 
-* Perspective projection and camera distance
-* Why Z-buffering is necessary
-* Difference between arrays and pointers in C++ linkage
-* Translation units and the One Definition Rule (ODR)
-* Why global mutable state is dangerous and how to reduce it
+* Most of the math is done manually (no OpenGL or anything).
+* I kept global variables only for things that need to persist, like buffers and rotation angles.
+* Temporary variables like x, y, z, ooz, and indices are local to the functions now, which makes the code cleaner.
 
 ---
 
-## 🎯 Possible Extensions
+## Ideas for improving it
 
-* Add ASCII lighting / shading
-* Add keyboard input for camera control
-* Implement FPS limiting and timing
-* Support multiple 3D objects (cube, sphere)
-* Wrap renderer logic into a class
-
----
-
-## 📜 License
-
-MIT License — free to learn from, modify, and share.
+* Add simple ASCII lighting/shading to make it look more 3D
+* Make it possible to control the camera or rotation with the keyboard
+* Limit the frame rate to make it smoother
+* Try rendering other 3D shapes like a cube or sphere
+* Wrap the whole thing in a class to make it more organized
 
 ---
 
-This project is intentionally low-level to **show understanding**, not visual fidelity. It’s meant to answer the question:
-
-> *"How does rendering actually work under the hood?"*
-
-And it does so — in plain C++.
+I wrote this mostly for fun and to practice low-level 3D math in C++. It's simple but it taught me a lot about how 3D graphics work under the hood.
