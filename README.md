@@ -1,54 +1,56 @@
 # ASCII Rotating Pyramid Renderer (C++)
 
-A terminal-based 3D graphics experiment written in **C++** that renders a **rotating 3D pyramid using ASCII characters**. The project demonstrates core computer graphics concepts such as 3D rotation, perspective projection, depth buffering (Z-buffer), and real-time animation — all without any external graphics libraries.
+A terminal-based **software renderer** written in modern **C++** that displays a rotating 3D pyramid using only ASCII characters. This project was refactored to better reflect **real-world C++ practices**, with clearer structure, safer math, and cleaner state handling.
 
 ---
 
-## ✨ Features
+## ✨ What This Project Demonstrates
 
-* Real-time **3D rotation** using Euler angles
-* **Perspective projection** from 3D to 2D screen space
-* **Z-buffer** for proper depth handling
-* Fully **ASCII-rendered** output in the terminal
-* No graphics APIs (OpenGL, Vulkan, etc.) — pure math and C++
-* Infinite animation loop with smooth updates
+* Manual **3D rotation** using Euler angles
+* **Perspective projection** (3D → 2D)
+* **Z-buffer depth testing** for correct visibility
+* Real-time animation loop in the terminal
+* Clean separation of global configuration vs logic
+* No graphics libraries — pure math + C++
 
 ---
 
-## 🧠 How It Works (High Level)
+## 🧠 Key Improvements (Refactor Highlights)
 
-1. The pyramid is defined mathematically using its height and base width
-2. Each frame:
+* Added **clear comments** explaining every rendering step
+* Reduced unnecessary global state usage
+* Fixed array vs pointer linkage issues using correct `extern` declarations
+* Made math temporaries local to avoid shared mutable state
+* Improved readability and maintainability
 
-   * The screen buffer and Z-buffer are cleared
+These changes make the code closer to what you would expect in a **junior systems / graphics-oriented C++ role**.
+
+---
+
+## 🖥️ How It Works (High Level)
+
+1. A pyramid is described mathematically using height and base width
+2. For every animation frame:
+
+   * Screen buffer and Z-buffer are cleared
    * Pyramid surface points are generated
    * Each point is rotated in 3D space
    * Points are projected onto a 2D terminal grid
-   * The Z-buffer ensures correct visibility
-3. The terminal is refreshed using ANSI escape codes
+   * The Z-buffer ensures correct depth ordering
+3. ANSI escape codes clear and redraw the terminal
 4. Rotation angles are updated continuously
 
 ---
 
-## 🖥️ Demo Preview
-
-The output looks like a rotating 3D pyramid made of characters such as:
+## 📂 Project Structure
 
 ```
-; ! & %
+.
+├── main.cpp        # Rendering loop and math logic
+├── Globals.h       # Shared configuration & state declarations
+├── Globals.cpp     # Global definitions (single translation unit)
+└── README.md
 ```
-
-Each character represents a different face of the pyramid, helping visualize depth and orientation.
-
----
-
-## 🛠️ Requirements
-
-* C++ compiler with **C++11 or later** support
-* A terminal that supports **ANSI escape sequences**
-
-  * Linux / macOS terminals work best
-  * Windows Terminal or recent versions of PowerShell also work
 
 ---
 
@@ -57,7 +59,7 @@ Each character represents a different face of the pyramid, helping visualize dep
 ### Compile
 
 ```bash
-g++ -std=c++11 -O2 pyramid.cpp -o pyramid
+g++ -std=c++11 -O2 main.cpp Globals.cpp -o pyramid
 ```
 
 ### Run
@@ -66,51 +68,38 @@ g++ -std=c++11 -O2 pyramid.cpp -o pyramid
 ./pyramid
 ```
 
-> Press **Ctrl + C** to stop the animation.
+Press **Ctrl + C** to exit.
 
 ---
 
-## 📁 Project Structure
+## 📐 Concepts You Can Talk About in Interviews
 
-```
-.
-├── pyramid.cpp   # Main source file
-└── README.md     # Project documentation
-```
-
----
-
-## 📐 Key Concepts Demonstrated
-
-* 3D coordinate transformations
-* Rotation matrices (via trigonometry)
-* Perspective projection
-* Depth testing (Z-buffering)
-* Double buffering (manual screen buffer)
-* Terminal control using ANSI escape codes
+* Perspective projection and camera distance
+* Why Z-buffering is necessary
+* Difference between arrays and pointers in C++ linkage
+* Translation units and the One Definition Rule (ODR)
+* Why global mutable state is dangerous and how to reduce it
 
 ---
 
-## 🎯 Customization Ideas
+## 🎯 Possible Extensions
 
-* Change pyramid size or shape
-* Adjust rotation speed or axes
-* Add lighting using ASCII shading
-* Render different 3D objects (cube, sphere, cone)
-* Add frame rate control
-
----
-
-## 📚 Inspiration
-
-This project is inspired by classic **ASCII 3D demos** and educational renderers that show how graphics work at a low level — similar in spirit to the famous ASCII donut.
+* Add ASCII lighting / shading
+* Add keyboard input for camera control
+* Implement FPS limiting and timing
+* Support multiple 3D objects (cube, sphere)
+* Wrap renderer logic into a class
 
 ---
 
 ## 📜 License
 
-This project is released under the **MIT License**. Feel free to modify, learn from, and share it.
+MIT License — free to learn from, modify, and share.
 
 ---
 
-Happy hacking and welcome to the world of software rendering 🚀
+This project is intentionally low-level to **show understanding**, not visual fidelity. It’s meant to answer the question:
+
+> *"How does rendering actually work under the hood?"*
+
+And it does so — in plain C++.
