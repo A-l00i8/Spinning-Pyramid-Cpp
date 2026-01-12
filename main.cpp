@@ -1,26 +1,29 @@
 #include <iostream>
 #include <cmath>
 #include <cstring>
+#include <cstdio>
 #include <thread>
 #include <chrono>
 
 using namespace std;
 
-double A, B, C; // angle rotations 
-const int pyramidHeight = 35, pyramidBase = 30;
-const int width = 100, height = 55;
 
-int backgroundASCIICode = ' ';
+double A, B, C = 1.57;
+const int pyramidBaseWidth = 40, pyramidHeight = 45;
+const int width = 70, height = 33;
+
 char buffer[width * height];
 double zBuffer[width * height];
+const int backgroundASCIICode = ' ';
 
 double x, y, z;
-int camDistance = 130;
-int K1 = 70;
-double ooz;
 
+const int K1 = 60;
+const int camDistance = 200;
 int xp, yp;
-int idx;
+double ooz;
+size_t idx;
+
 
 double calculateX(double i, double j, double k)
 {
@@ -47,70 +50,62 @@ double calculateZ(double i, double j, double k)
            + i*sin(B);
 }
 
-void calculateForPoint(double i, double j, double k, int ch) 
+void calculateForPoint(double i, double j, double k, int ch)
 {
     x = calculateX(i, j, k);
     y = calculateY(i, j, k);
     z = calculateZ(i, j, k) + camDistance;
-    ooz = 1 / z; // efficient
+    ooz = 1/z;
 
-    xp = (width / 2  + K1 * ooz * x * 2);
-    yp = (height / 2 + K1 * ooz * y);
-
+    xp = (width/2 + K1 * ooz * x * 2);
+    yp = (height/2 + K1 * ooz * y);
     idx = xp + (yp * width);
-    if (idx >= 0 && idx < width * height)
+
+    if ( ooz > zBuffer[idx] )
     {
-        if (ooz > zBuffer[idx])
-        {
-            zBuffer[idx] = ooz;
-            buffer[idx]  = ch; 
-        }
+        zBuffer[idx] = ooz;
+        buffer[idx] = ch;
     }
 }
 
-int main() {
-    cout << "\x1b[2J"; // clear the terminal
+
+
+int main()     
+{
+    cout << "\x1b[2J";
     while (true)
     {
-        memset(buffer, backgroundASCIICode, width * height * sizeof(char));
-        memset(zBuffer, 0, width * height * sizeof(double));
+        memset(buffer, backgroundASCIICode, width * height);
+        memset(zBuffer, 0.0, width * height * sizeof(double));
         
-        double axisYCoord = pyramidHeight/2;
-        double axisXCoord = pyramidBase/2;
+        double yCoord = pyramidHeight/2;
+        double xCoord = pyramidBaseWidth/2;
 
-        for (double i = -axisYCoord; i <= axisYCoord; i += 0.15)
+        for (double i = -yCoord; i <= yCoord; i += 0.10)
         {
-            double span = (axisXCoord * (axisYCoord - i ) / pyramidHeight);
-            for (double j = -span; j <= span; j += 0.15)
+            double span = pyramidBaseWidth * (yCoord - i) / pyramidHeight;
+            for (double j = -span; j <= span; j += 0.10)
             {
-                calculateForPoint(i, j, -span, '@');
-                calculateForPoint(i, j, span, '$');
-                calculateForPoint(i, -span, j, '&');
-                calculateForPoint(i, span, j, '!');
+                calculateForPoint(i, j, -span, ';');
+                calculateForPoint(i, j, span, '!');
+                calculateForPoint(i, span, j, '&');
+                calculateForPoint(i, -span, j, '%');
             }
         }
-
-        for (double j = -axisXCoord; j <= axisXCoord; j += 0.15)
-        {
-            for (double k = -axisXCoord; k < axisXCoord; k += 0.15)
-            {
-                calculateForPoint(-axisYCoord, j, k, '#');
-            }
-        }
-
 
         cout << "\x1b[H";
         for (int k = 0; k < width * height; ++k)
         {
-            putchar(k % width ? buffer[k] : 10); // prints new line when end of row
+            putchar(k % width ? buffer[k] : 10);
         }
-        cout << endl; // flush the buffer
 
-        A += 0.05;
-        B += 0.05;
-        C += 0.01;
-        this_thread::sleep_for(chrono::microseconds(8000 * 2));
+        A += 0.2;
+        B += 0.0;
+        C += 0.0;
+
+        //this_thread::sleep_for(chrono::microseconds(1));
+
     }
     
-    return 0;
+
 }
